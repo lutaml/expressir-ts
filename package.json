@@ -1,0 +1,38 @@
+{
+  "name": "expressir",
+  "version": "0.1.0",
+  "description": "Expressir wasm runtime for TypeScript — EXPRESS schema parse, remark attach, format, check, and the ISO 10303-21 population via the expressir-rs wasm build",
+  "type": "module",
+  "main": "dist/runtime.js",
+  "types": "dist/runtime.d.ts",
+  "files": [
+    "dist/",
+    "vendor/expressir-wasm/"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test test/*.test.mjs",
+    "refresh-wasm": "bash scripts/refresh-wasm.sh",
+    "prepublishOnly": "npm run build"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lutaml/expressir-ts.git"
+  },
+  "keywords": [
+    "express",
+    "iso-10303",
+    "step",
+    "wasm",
+    "rust"
+  ],
+  "private": false,
+  "devDependencies": {
+    "@types/node": "^26.6.3",
+    "typescript": "^5.5.0"
+  }
+}

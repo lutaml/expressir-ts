@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: jetli/wasm-pack-action@v0.4.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Rebuild the vendored wasm from the pinned submodule
+        run: npm run refresh-wasm
+      - name: Verify the vendor matches the pinned engine
+        run: |
+          test "$(cat vendor/expressir-wasm/BUILT_FROM | head -1)" \
+            = "$(git -C expressir-rs rev-parse HEAD)" \
+            || { echo "vendor/expressir-wasm is stale: run scripts/refresh-wasm.sh"; exit 1; }
+      - name: Install
+        run: npm ci || npm install
+      - name: Test
+        run: npm test

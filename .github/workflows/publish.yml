@@ -1,0 +1,54 @@
+name: Publish to npm
+
+# Trusted publishing (npm provenance over GitHub Actions OIDC): the
+# workflow claims the id-token; registering the publisher on npmjs
+# (the package's Publishing access → Trusted Publisher) is an OWNER
+# step and is done once.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "The exact version to publish (must match package.json)"
+        required: true
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org'
+      - name: Install wasm-pack
+        run: cargo install wasm-pack --locked || cargo install wasm-pack
+      - name: Refresh the vendored wasm from the submodule pin
+        run: npm run refresh-wasm
+      - name: Stamp the requested version
+        run: |
+          node - <<'JS'
+          const fs = require('fs');
+          const file = 'package.json';
+          const pkg = JSON.parse(fs.readFileSync(file, 'utf8'));
+          pkg.version = process.argv[1];
+          fs.writeFileSync(file, JSON.stringify(pkg, null, 2) + '\n');
+          JS "$GITHUB_EVENT_INPUTS_VERSION"
+        env:
+          GITHUB_EVENT_INPUTS_VERSION: ${{ github.event.inputs.version }}
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm test
+      - name: Publish with provenance
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,7 +1,7 @@
 {
-  "name": "expressir",
-  "version": "0.1.0",
-  "description": "Expressir wasm runtime for TypeScript — EXPRESS schema parse, remark attach, format, check, and the ISO 10303-21 population via the expressir-rs wasm build",
+  "name": "@expressir/expressir",
+  "version": "2.4.69",
+  "description": "Expressir wasm runtime for TypeScript \u2014 EXPRESS schema parse, remark attach, format, check, and the ISO 10303-21 population via the expressir-rs wasm build",
   "type": "module",
   "main": "dist/runtime.js",
   "types": "dist/runtime.d.ts",

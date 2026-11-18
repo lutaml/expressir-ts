@@ -62,7 +62,7 @@ let wasmModule: WasmExpressir | null = null;
 function wasm(): WasmExpressir {
   if (wasmModule === null) {
     wasmModule = require(
-      join(packageRoot(), "vendor", "expressir-wasm", "expressir_rs.cjs"),
+      join(packageRoot(), "vendor", "expressir-wasm", "expressir.cjs"),
     ) as WasmExpressir;
   }
   return wasmModule;

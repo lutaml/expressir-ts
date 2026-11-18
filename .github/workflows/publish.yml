@@ -48,7 +48,7 @@ jobs:
         run: npm run build
       - name: Test
         run: npm test
+      # npm trusted publishing: the OIDC claim matches the publisher
+      # registered on @expressir/expressir — no token secret exists.
       - name: Publish with provenance
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

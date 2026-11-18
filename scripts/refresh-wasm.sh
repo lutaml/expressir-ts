@@ -11,10 +11,10 @@ rm -rf pkg
 wasm-pack build --release --target=nodejs
 
 # The glue ships as CommonJS under this package's "type": "module".
-cp pkg/expressir_rs_bg.wasm pkg/expressir_rs_bg.wasm.d.ts pkg/expressir_rs.d.ts \
+cp pkg/expressir_bg.wasm pkg/expressir_bg.wasm.d.ts pkg/expressir.d.ts \
    "$HERE/vendor/expressir-wasm/"
-cp pkg/expressir_rs.js "$HERE/vendor/expressir-wasm/expressir_rs.cjs"
-rm -f "$HERE/vendor/expressir-wasm/expressir_rs.js"
+cp pkg/expressir.js "$HERE/vendor/expressir-wasm/expressir.cjs"
+rm -f "$HERE/vendor/expressir-wasm/expressir.js"
 git -C "$RS" rev-parse HEAD > "$HERE/vendor/expressir-wasm/BUILT_FROM"
 echo "built with: wasm-pack build --target=nodejs (from expressir-rs)" \
   >> "$HERE/vendor/expressir-wasm/BUILT_FROM"

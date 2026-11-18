@@ -34,14 +34,14 @@ jobs:
       - name: Refresh the vendored wasm from the submodule pin
         run: npm run refresh-wasm
       - name: Stamp the requested version
-        run: |
-          node - <<'JS'
-          const fs = require('fs');
-          const file = 'package.json';
-          const pkg = JSON.parse(fs.readFileSync(file, 'utf8'));
-          pkg.version = process.argv[1];
-          fs.writeFileSync(file, JSON.stringify(pkg, null, 2) + '\n');
-          JS "$GITHUB_EVENT_INPUTS_VERSION"
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.version }}
+        run: >-
+          node -e "const fs=require('fs');const
+          p=JSON.parse(fs.readFileSync('package.json','utf8'));p.version=process.env.RELEASE_VERSION;fs.writeFileSync('package.json',JSON.stringify(p,null,2)+'\n')"
+      # npm trusted publishing needs npm >= 11.5.1 for the OIDC claim.
+      - name: Use a TP-capable npm
+        run: npm install -g npm@latest
         env:
           GITHUB_EVENT_INPUTS_VERSION: ${{ github.event.inputs.version }}
       - name: Build

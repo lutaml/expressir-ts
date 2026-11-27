@@ -1,2 +1,2 @@
-f153236085b4234a4f0048b6f2bc5fb26ca045c0
+aee916686f73b973eaf4721c08667750806185d4
 built with: wasm-pack build --target=nodejs (from expressir-rs)

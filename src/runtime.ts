@@ -18,6 +18,8 @@ interface WasmExpressir {
   check(wire_json: string, dialect: string | null): string;
   parse_population(source: string): string;
   validate_population(entities_json: string, source: string): string;
+  flatten_schema(repository_wire_json: string, root_id: string, longform_name: string): string;
+  parse_population_recovering(source: string): string;
 }
 
 export interface PopulationRecord {
@@ -126,4 +128,35 @@ export function validatePopulation(entities: string[], source: string): Verdict 
     wasm().validate_population(JSON.stringify(entities), source),
     "verdict",
   );
+}
+
+/** The recovered population envelope: the inventory on well-formed
+ * input, the failure forensics on malformed input (#627). */
+export interface RecoveredPopulation {
+  ok: boolean;
+  population: Population | null;
+  error: { offset: number; line?: number; column?: number; expected?: string[] } | null;
+  consumed_upto: number | null;
+  resyncs: { offset: number; end: number }[];
+  partial_records: PopulationRecord[];
+  partial_references: [number, string][];
+}
+
+/** Runs the SHTOLO longform over a resolved repository wire (#636):
+ * the closure copy with the id munges, prune, the extensible folding,
+ * the subtype-constraint elimination, the conversions, provenance.
+ * Returns the longform schema wire JSON string. */
+export function flattenSchema(
+  repositoryWire: Record<string, unknown> | string,
+  rootId: string,
+  longformName: string,
+): string {
+  const wireJson = typeof repositoryWire === "string" ? repositoryWire : JSON.stringify(repositoryWire);
+  return wasm().flatten_schema(wireJson, rootId, longformName);
+}
+
+/** Parses an ISO-10303-21 population through the recovery envelope
+ * (#627). */
+export function parsePopulationRecovering(source: string): RecoveredPopulation {
+  return parseJson(wasm().parse_population_recovering(source), "recovery envelope");
 }

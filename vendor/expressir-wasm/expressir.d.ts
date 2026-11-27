@@ -5,9 +5,13 @@ export function attach_remarks(wire_json: string, source: string, annotations: b
 
 export function check(wire_json: string, dialect?: string | null): string;
 
+export function concat_schema(repository_wire: string, root_id: string): string;
+
 export function coverage(wire_json: string, skip_types_json: string): string;
 
 export function diff_population(base: string, revised: string): string;
+
+export function flatten_schema(repository_wire: string, root_id: string, longform_name: string): string;
 
 export function format(wire_json: string, no_remarks: boolean): string;
 
@@ -18,6 +22,8 @@ export function lsp_rename_edits(source: string, path: string): string;
 export function lsp_symbols(source: string): string;
 
 export function parse_population(source: string): string;
+
+export function parse_population_recovering(source: string): string;
 
 export function parse_schema(source: string): string;
 

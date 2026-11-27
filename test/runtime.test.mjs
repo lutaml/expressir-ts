@@ -44,3 +44,39 @@ test("population parse + validate", () => {
   assert.equal(verdict.valid, true);
   assert.equal(validatePopulation(["NotE"], POPULATION).valid, false);
 });
+
+import { flattenSchema, parsePopulationRecovering } from "../src/runtime.ts";
+
+test("flattenSchema returns the longform wire", () => {
+  const repoWire = {
+    schemas: [
+      {
+        id: "mim",
+        interfaces: [
+          {
+            _class: "Expressir::Model::Declarations::Interface",
+            kind: "USE",
+            schema: { _class: "Expressir::Model::References::SimpleReference", id: "arm" },
+          },
+        ],
+      },
+      { id: "arm", interfaces: [] },
+    ],
+  };
+  const longform = JSON.parse(flattenSchema(repoWire, "mim", "mim_long"));
+  assert.equal(longform.id, "mim_long");
+});
+
+test("parsePopulationRecovering carries the envelope", () => {
+  const ok = parsePopulationRecovering(POPULATION);
+  assert.equal(ok.ok, true);
+  assert.equal(ok.population.records[0].keyword, "E");
+
+  const junked = POPULATION.replace(
+    "ENDSEC;\nEND-ISO-10303-21;",
+    "\n#9999=JUNK(%%%);\nENDSEC;\nEND-ISO-10303-21;",
+  );
+  const bad = parsePopulationRecovering(junked);
+  assert.equal(bad.ok, false);
+  assert.equal(bad.consumed_upto, bad.error.offset);
+});

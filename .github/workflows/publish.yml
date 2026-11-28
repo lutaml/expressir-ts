@@ -31,6 +31,9 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
       - name: Install wasm-pack
         run: cargo install wasm-pack --locked || cargo install wasm-pack
+      # tsc is a devDependency — the build needs the install first.
+      - name: Install dependencies
+        run: npm install
       - name: Refresh the vendored wasm from the submodule pin
         run: npm run refresh-wasm
       - name: Stamp the requested version
